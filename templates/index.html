@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PractiChat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='background.jpg') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <h1 class="text-center">PractiChat</h1>
+            <div id="chatbot_response" class="messages-container"></div>
+            <form id="message-form" class="d-flex flex-column align-items-center">
+                <div class="form-group w-100">
+                    <input type="text" class="form-control" id="user_input" placeholder="Type your message...">
+                </div>
+                <button type="submit" class="btn btn-primary" id="send-button">Send</button>
+                <div id="loader" class="loader d-none"></div> <!-- Loader initially hidden -->
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let waitingForResponse = false;
+
+            $('#message-form').submit(async function(event) {
+                event.preventDefault();
+
+                if (waitingForResponse) {
+                    return; // If waiting for response, do not send another message
+                }
+
+                const userMessage = $('#user_input').val().trim();
+                if (userMessage === '') return;
+
+                // Display loader while waiting for response
+                $('#loader').removeClass('d-none');
+                waitingForResponse = true;
+
+                appendMessage('User', userMessage, 'user-message', "calculating"); 
+                $('#user_input').val('');
+
+                try {
+                    const response = await fetch('/get_response', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `user_input=${encodeURIComponent(userMessage)}`
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+
+                    const responseData = await response.json();
+                    const botResponse = responseData.response;
+                    const userScore = responseData.user_input_score;
+                    const botScore = responseData.bot_response_score;
+
+                    // Update user message with the correct score
+                    updateLastMessageScore('user', userScore);
+                    appendMessage('PractiChat', botResponse, 'bot-message', botScore);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    appendMessage('System', 'An error occurred. Please try again later.', 'bot-message', 0);
+                } finally {
+                    // Hide loader and allow sending new messages
+                    $('#loader').addClass('d-none');
+                    waitingForResponse = false;
+                }
+            });
+
+            function appendMessage(sender, message, messageClass, score) {
+                const messageElement = `<div class="message ${messageClass}"><strong>${sender}:</strong> ${message}<div class="score">Difficulty score: ${score}</div></div>`;
+                $('#chatbot_response').append(messageElement);
+
+                // Optional: Scroll to bottom of chatbot_response div
+                $('#chatbot_response').scrollTop($('#chatbot_response')[0].scrollHeight);
+            }
+
+            function updateLastMessageScore(sender, score) {
+                const lastMessage = $(`#chatbot_response .${sender}-message`).last();
+                lastMessage.find('.score').text(`Difficulty Score: ${score}`);
+            }
+        });
+    </script>
+</body>
+</html>

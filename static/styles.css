@@ -1,0 +1,108 @@
+/* Global styles */
+body {
+    background-image: url("{{ url_for('static', filename='background.jpg') }}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 700px;
+    background-color: rgba(19, 44, 68, 0.6); /* Semi-transparent dark blue */
+    border: 1px solid #060c13; /* Dark border color */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(246, 245, 245, 0.1); /* Light shadow */
+    padding: 20px;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fcfcfd; /* White header color */
+}
+
+.messages-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-bottom: 10px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+    display: inline-block;
+    clear: both;
+}
+
+.user-message {
+    background-color: rgba(27, 74, 140, 0.7); /* Blue user message background */
+    color: #ffffff; /* White user message text */
+    text-align: right;
+    float: right;
+}
+
+.bot-message {
+    background-color: rgba(27, 40, 63, 0.7); /* Dark blue bot message background */
+    color: #ffffff; /* White bot message text */
+    text-align: left;
+    float: left;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+#send-button {
+    border-radius: 5px;
+    background-color: #0b2847; /* Dark blue button background */
+    border-color: #0b2847; /* Dark blue button border */
+    color: #ffffff; /* White button text */
+    margin-top: 10px; /* Space between input and button */
+}
+
+#send-button:hover {
+    background-color: #0b2847; /* Dark blue button hover background */
+    border-color: #0b2847; /* Dark blue button hover border */
+}
+
+.loader {
+    border: 4px solid #f3f3f3; /* Light border color for loader */
+    border-top: 4px solid #8aa4ba; /* Light blue loader animation */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite; /* Loader animation */
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Score styling */
+.score {
+    font-size: 12px; /* Small font size for score */
+    color: #ccc; /* Light gray color for score text */
+    margin-top: 5px; /* Space between message and score */
+}
